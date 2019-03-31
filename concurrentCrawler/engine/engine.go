@@ -2,6 +2,7 @@ package engine
 
 import (
 	"crawler/concurrentCrawler/fetcher"
+	"crawler/concurrentCrawler/utils"
 	"log"
 )
 
@@ -13,12 +14,20 @@ func (e SimpleEngine) Run(seeds ...Request) {
 
 	//将新的请求加入到队列中
 	for _, seed := range seeds {
+		if utils.IsDuplicate(seed.Url) {
+			continue
+		}
 		requests = append(requests, seed)
 	}
 
 	for len(requests) > 0 {
 		r := requests[0]
 		requests = requests[1:]
+
+		//去除重复的请求
+		if utils.IsDuplicate(r.Url) {
+			continue
+		}
 
 		parserResult, err := worker(r)
 		if err != nil {

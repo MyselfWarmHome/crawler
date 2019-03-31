@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"crawler/concurrentCrawler/utils"
 	"log"
 )
 
@@ -18,6 +19,9 @@ func (e *QueueConcurrentEngine) Run(seeds ...Request) {
 	}
 
 	for _, r := range seeds {
+		if utils.IsDuplicate(r.Url) {
+			continue
+		}
 		e.Scheduler.Submit(r)
 	}
 
@@ -28,6 +32,9 @@ func (e *QueueConcurrentEngine) Run(seeds ...Request) {
 		}
 
 		for _, request := range result.Requests {
+			if utils.IsDuplicate(request.Url) {
+				continue
+			}
 			e.Scheduler.Submit(request)
 		}
 	}

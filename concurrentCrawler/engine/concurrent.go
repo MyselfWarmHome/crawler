@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"crawler/concurrentCrawler/utils"
 	"log"
 )
 
@@ -29,6 +30,9 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 	}
 
 	for _, r := range seeds {
+		if utils.IsDuplicate(r.Url) {
+			continue
+		}
 		e.Scheduler.Submit(r)
 	}
 
@@ -48,6 +52,11 @@ func createWorker(in chan Request, out chan ParseResult) {
 	go func() {
 		for {
 			request := <-in
+			//去除重复的请求
+			if utils.IsDuplicate(request.Url) {
+				continue
+			}
+
 			result, err := worker(request)
 			if err != nil {
 				continue

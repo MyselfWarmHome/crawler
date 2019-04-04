@@ -12,7 +12,10 @@ import (
 JsonRpc的服务端
 */
 func ServeRpc(host string, service interface{}) error {
-	rpc.Register(service)
+	err := rpc.Register(service)
+	if err != nil {
+		return err
+	}
 	listener, err := net.Listen(config.NetProtocol, host)
 	if err != nil {
 		return err
@@ -26,7 +29,6 @@ func ServeRpc(host string, service interface{}) error {
 		}
 		go jsonrpc.ServeConn(conn)
 	}
-	return nil
 }
 
 /**

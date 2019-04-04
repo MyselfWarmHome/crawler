@@ -22,7 +22,7 @@ func main() {
 		ItemChan:  itemChan,
 	}
 	e.Run(engine.Request{
-		Url:        config.CrawlerUrl,
-		ParserFunc: parser.ParseCityList,
+		Url:    config.CrawlerUrl,
+		Parser: engine.NewFuncParser(parser.ParseCityList, "ParseCityList"),
 	})
 }
